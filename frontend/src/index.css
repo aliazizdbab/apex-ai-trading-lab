@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (RGB channels so Tailwind alpha utilities work). Dark is the default. */
+:root {
+  --bg: 9 13 19; /* #090D13 Deep Graphite */
+  --panel: 13 20 32; /* #0D1420 Midnight Navy */
+  --surface: 19 28 41; /* #131C29 */
+  --elevated: 25 37 54; /* #192536 */
+  --line: 37 52 73; /* #253449 Subtle Steel */
+  --ink: 230 237 245;
+  --mute: 165 179 197; /* #A5B3C5 Neutral */
+  --cyan: 54 197 240; /* #36C5F0 */
+  --emerald: 25 201 149; /* #19C995 */
+  --violet: 146 117 255; /* #9275FF */
+  --amber: 244 184 92; /* #F4B85C */
+  --bull: 25 201 149; /* #19C995 */
+  --bear: 240 91 112; /* #F05B70 */
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --bg: 244 247 251;
+  --panel: 255 255 255;
+  --surface: 237 242 248;
+  --elevated: 228 235 244;
+  --line: 208 218 231;
+  --ink: 15 23 42;
+  --mute: 87 102 122;
+  --cyan: 8 130 170;
+  --emerald: 5 150 105;
+  --violet: 109 78 224;
+  --amber: 180 110 10;
+  --bull: 5 150 105;
+  --bear: 205 40 60;
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: rgb(var(--bg));
+  color: rgb(var(--ink));
+  font-family: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:root[dir='rtl'] body {
+  font-family: 'IBM Plex Sans Arabic', 'Inter', system-ui, sans-serif;
+}
+
+/* Financial values: tabular numerals, always left-to-right even inside RTL text. */
+.num {
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--cyan));
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--line));
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
