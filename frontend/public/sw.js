@@ -1,5 +1,5 @@
 // APEX AI Trading Lab Service Worker — GitHub Version-Aware Auto-Refresh
-const CACHE_NAME = 'apex-shell-v1.0.0';
+const CACHE_NAME = 'apex-shell-v1.1.0';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

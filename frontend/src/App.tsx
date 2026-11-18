@@ -7,6 +7,7 @@ import { AiStrategyBuilderPage } from '@/pages/AiStrategyBuilderPage';
 import { BacktestingPage } from '@/pages/BacktestingPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ExchangesPage } from '@/pages/ExchangesPage';
+import { GuidePage } from '@/pages/GuidePage';
 import { IndicatorLibraryPage } from '@/pages/IndicatorLibraryPage';
 import { LiveMarketPage } from '@/pages/LiveMarketPage';
 import { LiveTradingPage } from '@/pages/LiveTradingPage';
@@ -30,9 +31,10 @@ import { StrategyLibraryPage } from '@/pages/StrategyLibraryPage';
 import { TerminalPage } from '@/pages/TerminalPage';
 import { WatchlistPage } from '@/pages/WatchlistPage';
 
-/** All 25 navigation modules registered in this build. */
+/** All 26 navigation modules registered in this build. */
 const BUILT_PAGES: Record<string, ReactElement> = {
   dashboard: <DashboardPage />,
+  guide: <GuidePage />,
   marketOverview: <MarketOverviewPage />,
   liveMarket: <LiveMarketPage />,
   terminal: <TerminalPage />,

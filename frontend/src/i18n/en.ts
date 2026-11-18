@@ -11,6 +11,7 @@ export const en = {
   'nav.group.system': 'System',
 
   'nav.dashboard': 'Dashboard',
+  'nav.guide': 'App Guide & Help',
   'nav.marketOverview': 'Market Overview',
   'nav.liveMarket': 'Live Market',
   'nav.terminal': 'Trading Terminal',
@@ -422,6 +423,15 @@ export const en = {
   'upd.upToDate': 'Up to date with GitHub',
   'upd.available': 'Update Available',
   'upd.downloads': 'Platform Builds & Auto-Update Packages',
+
+  'guide.title': 'APEX AI Trading Lab — Complete Guide & Onboarding',
+  'guide.intro': 'Everything you need to know about the platform architecture, AI Quant Copilot, strategy testing workflow, safety isolation, and multi-platform GitHub auto-updates.',
+  'guide.quickstartTitle': 'Quickstart in 5 Steps',
+  'guide.copilotTitle': 'Agentic AI Quant Copilot Guide',
+  'guide.metricsTitle': 'Quantitative Metrics & Safety Reference',
+  'guide.bannerTitle': 'New to APEX AI Trading Lab? Explore Every Feature & AI Copilot Workflow',
+  'guide.bannerBody': 'Follow the interactive onboarding guide, learn risk metrics, or launch AI Copilot to build and backtest your first strategy.',
+  'guide.noActivityHint': 'No backtest runs or paper orders recorded yet. Launch a backtest or paper trade to see results here.',
 } as const;
 
 export type TKey = keyof typeof en;

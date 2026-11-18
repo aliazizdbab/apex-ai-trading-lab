@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Bell, Bot, Download, Moon, Settings, Sun, User } from 'lucide-react';
+import { Bell, BookOpen, Bot, Download, Moon, Settings, Sun, User } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ALL_NAV_ITEMS } from '@/config/navigation';
@@ -56,16 +56,16 @@ export function GlobalHeader() {
   const title = current ? t(current.labelKey) : t('common.notFoundTitle');
   const ThemeIcon = theme === 'dark' ? Sun : Moon;
   const iconButton =
-    'relative flex h-11 w-11 shrink-0 items-center justify-center rounded text-mute hover:bg-surface hover:text-ink sm:h-9 sm:w-9';
+    'relative flex h-9 w-9 shrink-0 items-center justify-center rounded text-mute hover:bg-surface hover:text-ink';
 
   return (
-    <header className="flex h-14 shrink-0 items-center gap-2 border-b border-line bg-panel px-3 sm:gap-3 sm:px-4">
+    <header className="flex h-14 w-full min-w-0 shrink-0 items-center gap-1.5 border-b border-line bg-panel px-2.5 sm:gap-3 sm:px-4">
       <div className="lg:hidden">
         <Logo showText={false} />
       </div>
       <h1 className="min-w-0 truncate text-sm font-semibold sm:text-base">{title}</h1>
 
-      <div className="ms-auto flex items-center gap-1.5 sm:gap-2">
+      <div className="ms-auto flex min-w-0 items-center gap-1 sm:gap-2">
         <div className="hidden items-center gap-1.5 md:flex">
           <StatusBadge
             label={t('status.mexc')}
@@ -93,9 +93,18 @@ export function GlobalHeader() {
         >
           <Download className="h-3.5 w-3.5" aria-hidden="true" />
           <span className="num">
-            v{updateInfo?.current_version ?? '1.0.0'}
+            v{updateInfo?.current_version ?? '1.1.0'}
             {updateInfo?.update_available ? ` → ${updateInfo.latest_tag}` : ''}
           </span>
+        </Link>
+
+        <Link
+          to="/guide"
+          aria-label={t('nav.guide')}
+          title={t('nav.guide')}
+          className={iconButton}
+        >
+          <BookOpen className="h-[18px] w-[18px] text-cyan" aria-hidden="true" />
         </Link>
 
         <button

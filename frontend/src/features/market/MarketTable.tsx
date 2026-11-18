@@ -73,11 +73,11 @@ export function MarketTable({ rows }: Props) {
       {visible.length === 0 ? (
         <EmptyState title={t('mkt.noResults')} />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-sm">
+        <div className="w-full max-w-full overflow-x-auto">
+          <table className="w-full text-xs sm:text-sm">
             <thead className="text-xs text-mute">
               <tr className="border-b border-line text-start">
-                <th scope="col" className="sticky start-0 z-10 bg-panel px-3 py-2 text-start font-medium">
+                <th scope="col" className="px-2 py-2 text-start font-medium sm:px-3">
                   <button type="button" onClick={() => sortBy('symbol')} className="inline-flex min-h-[32px] items-center gap-1 hover:text-ink">
                     {t('mkt.pair')}
                     {sortKey === 'symbol' &&
@@ -86,11 +86,17 @@ export function MarketTable({ rows }: Props) {
                 </th>
                 {header('last', t('mkt.last'))}
                 {header('change24h', t('mkt.change'))}
-                {header('volume24h', t('mkt.volume'))}
-                <th scope="col" className="px-3 py-2 text-end font-medium">{t('mkt.high')}</th>
-                <th scope="col" className="px-3 py-2 text-end font-medium">{t('mkt.low')}</th>
-                <th scope="col" className="px-3 py-2 text-start font-medium">{t('mkt.status')}</th>
-                <th scope="col" className="px-3 py-2"><span className="sr-only">{t('mkt.openChart')}</span></th>
+                <th scope="col" className="hidden px-3 py-2 text-end font-medium sm:table-cell">
+                  <button type="button" onClick={() => sortBy('volume24h')} className="inline-flex min-h-[32px] items-center gap-1 hover:text-ink">
+                    {t('mkt.volume')}
+                    {sortKey === 'volume24h' &&
+                      (sortDir === 'asc' ? <ArrowUp className="h-3 w-3" aria-hidden="true" /> : <ArrowDown className="h-3 w-3" aria-hidden="true" />)}
+                  </button>
+                </th>
+                <th scope="col" className="hidden px-3 py-2 text-end font-medium lg:table-cell">{t('mkt.high')}</th>
+                <th scope="col" className="hidden px-3 py-2 text-end font-medium lg:table-cell">{t('mkt.low')}</th>
+                <th scope="col" className="hidden px-3 py-2 text-start font-medium md:table-cell">{t('mkt.status')}</th>
+                <th scope="col" className="px-2 py-2 sm:px-3"><span className="sr-only">{t('mkt.openChart')}</span></th>
               </tr>
             </thead>
             <tbody>
@@ -98,33 +104,33 @@ export function MarketTable({ rows }: Props) {
                 const fav = favorites.includes(r.symbol);
                 return (
                   <tr key={r.symbol} className="border-b border-line/60 hover:bg-surface/60">
-                    <td className="sticky start-0 z-10 bg-panel px-3 py-1">
+                    <td className="px-2 py-1.5 sm:px-3">
                       <div className="flex items-center gap-1">
                         <button
                           type="button"
                           onClick={() => toggleFavorite(r.symbol)}
                           aria-pressed={fav}
                           aria-label={`${t('mkt.toggleFav')}: ${r.symbol}`}
-                          className="flex h-11 w-9 items-center justify-center sm:h-8"
+                          className="flex h-9 w-7 shrink-0 items-center justify-center sm:h-8 sm:w-8"
                         >
-                          <Star className={`h-4 w-4 ${fav ? 'fill-amber text-amber' : 'text-mute'}`} aria-hidden="true" />
+                          <Star className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${fav ? 'fill-amber text-amber' : 'text-mute'}`} aria-hidden="true" />
                         </button>
-                        <span className="num font-semibold">{r.symbol}</span>
+                        <span className="num whitespace-nowrap font-semibold">{r.symbol}</span>
                       </div>
                     </td>
-                    <td className="num px-3 py-1 text-end">{fmtPrice(r.last)}</td>
-                    <td className={`num px-3 py-1 text-end font-medium ${r.change24h >= 0 ? 'text-bull' : 'text-bear'}`}>{fmtPct(r.change24h)}</td>
-                    <td className="num px-3 py-1 text-end">{fmtCompact(r.volume24h)}</td>
-                    <td className="num px-3 py-1 text-end text-mute">{fmtPrice(r.high)}</td>
-                    <td className="num px-3 py-1 text-end text-mute">{fmtPrice(r.low)}</td>
-                    <td className="px-3 py-1 text-xs text-mute">{r.status === 'trading' ? t('mkt.trading') : t('mkt.halted')}</td>
-                    <td className="px-3 py-1 text-end">
+                    <td className="num whitespace-nowrap px-2 py-1.5 text-end sm:px-3">{fmtPrice(r.last)}</td>
+                    <td className={`num whitespace-nowrap px-2 py-1.5 text-end font-medium sm:px-3 ${r.change24h >= 0 ? 'text-bull' : 'text-bear'}`}>{fmtPct(r.change24h)}</td>
+                    <td className="num hidden whitespace-nowrap px-3 py-1.5 text-end sm:table-cell">{fmtCompact(r.volume24h)}</td>
+                    <td className="num hidden whitespace-nowrap px-3 py-1.5 text-end text-mute lg:table-cell">{fmtPrice(r.high)}</td>
+                    <td className="num hidden whitespace-nowrap px-3 py-1.5 text-end text-mute lg:table-cell">{fmtPrice(r.low)}</td>
+                    <td className="hidden px-3 py-1.5 text-xs text-mute md:table-cell">{r.status === 'trading' ? t('mkt.trading') : t('mkt.halted')}</td>
+                    <td className="px-2 py-1.5 text-end sm:px-3">
                       <button
                         type="button"
                         onClick={() => navigate(`/terminal?symbol=${encodeURIComponent(r.symbol)}`)}
                         aria-label={`${t('mkt.openChart')}: ${r.symbol}`}
                         title={t('mkt.openChart')}
-                        className="inline-flex h-11 w-11 items-center justify-center rounded text-mute hover:bg-elevated hover:text-cyan sm:h-8 sm:w-8"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded text-mute hover:bg-elevated hover:text-cyan sm:h-8 sm:w-8"
                       >
                         <CandlestickChart className="h-4 w-4" aria-hidden="true" />
                       </button>

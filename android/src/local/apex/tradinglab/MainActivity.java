@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -21,7 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class MainActivity extends Activity {
-    private static final String CURRENT_VERSION = "1.0.0";
+    private static final String CURRENT_VERSION = "1.1.0";
     private static final String GITHUB_LATEST_API =
             "https://api.github.com/repos/aliazizdbab/apex-ai-trading-lab/releases/latest";
     private static final String LOCAL_APP_HOST = "appassets.apex.local";
@@ -33,11 +34,19 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         webView = new WebView(this);
+        webView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
         webView.setBackgroundColor(Color.parseColor("#0b0f17"));
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setSupportZoom(false);
+        settings.setBuiltInZoomControls(false);
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 
         webView.setWebViewClient(new WebViewClient() {
@@ -67,6 +76,17 @@ public class MainActivity extends Activity {
     }
 
     private WebResourceResponse serveLocalAsset(String rawPath) {
+        if (rawPath != null && rawPath.startsWith("/api/")) {
+            byte[] payload = "{\"detail\":\"standalone_mobile_mode\"}"
+                    .getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            return new WebResourceResponse(
+                    "application/json",
+                    "UTF-8",
+                    404,
+                    "Not Found",
+                    null,
+                    new java.io.ByteArrayInputStream(payload));
+        }
         String cleanPath = (rawPath == null || rawPath.equals("/") || rawPath.isEmpty())
                 ? "index.html"
                 : rawPath.replaceFirst("^/+", "");

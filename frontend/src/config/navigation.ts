@@ -1,6 +1,7 @@
 import {
   Activity,
   Bell,
+  BookOpen,
   Bot,
   CandlestickChart,
   ClipboardList,
@@ -51,6 +52,7 @@ export const NAV_GROUPS: NavGroup[] = [
     labelKey: 'nav.group.overview',
     items: [
       { id: 'dashboard', path: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard, phase: 1, built: true },
+      { id: 'guide', path: '/guide', labelKey: 'nav.guide', icon: BookOpen, phase: 16, built: true },
       { id: 'marketOverview', path: '/market-overview', labelKey: 'nav.marketOverview', icon: Globe, phase: 3, built: true },
     ],
   },

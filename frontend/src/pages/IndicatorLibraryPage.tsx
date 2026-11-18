@@ -296,7 +296,7 @@ export function IndicatorLibraryPage() {
                 )}
 
                 <form onSubmit={onSavePreset} className="flex flex-wrap items-end gap-3 border-t border-line pt-3">
-                  <label className="min-w-[200px] flex-1 space-y-1 text-xs">
+                  <label className="min-w-0 flex-1 space-y-1 text-xs sm:min-w-[200px]">
                     <span className="text-mute">{t('indLib.presetName')}</span>
                     <input
                       type="text"

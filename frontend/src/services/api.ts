@@ -1,5 +1,6 @@
 import type { Candle, ConnectionState, MarketRow } from '@/types';
 import type { Lang, Theme } from '@/stores/uiStore';
+import { handleStandaloneRequest } from './standaloneFallback';
 
 export class ApiError extends Error {
   status: number;
@@ -13,27 +14,42 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-    ...init,
-  });
+  try {
+    const res = await fetch(path, {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(init?.headers ?? {}),
+      },
+      ...init,
+    });
 
-  if (!res.ok) {
-    let detail = `HTTP ${res.status}`;
-    try {
-      const body = (await res.json()) as { detail?: string };
-      if (body?.detail) detail = body.detail;
-    } catch {
-      // ignore non-JSON error body
+    const contentType = res.headers.get('content-type') || '';
+    if (!res.ok) {
+      let detail = `HTTP ${res.status}`;
+      if (contentType.includes('application/json')) {
+        try {
+          const body = (await res.json()) as { detail?: string };
+          if (body?.detail) detail = body.detail;
+        } catch {
+          // ignore
+        }
+      }
+      if (detail === 'standalone_mobile_mode' || res.status >= 502 || !contentType.includes('application/json')) {
+        return handleStandaloneRequest<T>(path, init);
+      }
+      throw new ApiError(res.status, detail);
     }
-    throw new ApiError(res.status, detail);
-  }
 
-  return (await res.json()) as T;
+    if (!contentType.includes('application/json')) {
+      return handleStandaloneRequest<T>(path, init);
+    }
+
+    return (await res.json()) as T;
+  } catch (err) {
+    if (err instanceof ApiError) throw err;
+    return handleStandaloneRequest<T>(path, init);
+  }
 }
 
 export interface HealthResponse {

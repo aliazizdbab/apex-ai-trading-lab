@@ -649,7 +649,7 @@ def test_github_updates_status_and_check_endpoints(full_env):
     st = client.get("/api/v1/system/updates/status")
     assert st.status_code == 200
     st_json = st.json()
-    assert st_json["current_version"] == "1.0.0"
+    assert st_json["current_version"] == "1.1.0"
     assert st_json["repo"] == "aliazizdbab/apex-ai-trading-lab"
     assert "windows" in st_json["platforms"]
     assert "macos" in st_json["platforms"]
@@ -659,7 +659,7 @@ def test_github_updates_status_and_check_endpoints(full_env):
     chk = client.post("/api/v1/system/updates/check")
     assert chk.status_code == 200
     chk_json = chk.json()
-    assert chk_json["current_version"] == "1.0.0"
+    assert chk_json["current_version"] == "1.1.0"
     assert chk_json["repo"] == "aliazizdbab/apex-ai-trading-lab"
     assert "platforms" in chk_json
 

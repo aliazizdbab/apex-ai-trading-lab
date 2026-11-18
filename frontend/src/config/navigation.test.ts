@@ -3,8 +3,8 @@ import { en } from '@/i18n/en';
 import { ALL_NAV_ITEMS, MOBILE_TABS, NAV_GROUPS } from './navigation';
 
 describe('navigation config', () => {
-  it('exposes the 25 modules of the approved navigation', () => {
-    expect(ALL_NAV_ITEMS).toHaveLength(25);
+  it('exposes the 26 modules of the approved navigation', () => {
+    expect(ALL_NAV_ITEMS).toHaveLength(26);
   });
 
   it('has unique ids and unique absolute paths', () => {

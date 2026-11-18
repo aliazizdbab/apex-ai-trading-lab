@@ -111,7 +111,7 @@ jobs:
           cp version.json android/assets/www/version.json
           ANDROID_JAR=$(ls $ANDROID_HOME/platforms/android-*/android.jar | tail -n 1)
           BT_DIR=$(ls -d $ANDROID_HOME/build-tools/* | tail -n 1)
-          "$BT_DIR/aapt" package -f -M android/AndroidManifest.xml -I "$ANDROID_JAR" -A android/assets -F artifacts/apex-unaligned.apk
+          "$BT_DIR/aapt" package -f -M android/AndroidManifest.xml -S android/res -I "$ANDROID_JAR" -A android/assets -F artifacts/apex-unaligned.apk
           javac --release 11 -cp "$ANDROID_JAR" -d android/build/classes android/src/local/apex/tradinglab/MainActivity.java
           "$BT_DIR/d8" --lib "$ANDROID_JAR" --output artifacts $(find android/build/classes -name '*.class')
           zip -j artifacts/apex-unaligned.apk artifacts/classes.dex

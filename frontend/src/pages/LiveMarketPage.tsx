@@ -55,18 +55,18 @@ export function LiveMarketPage() {
         {items.length === 0 ? (
           <EmptyState title={t('mkt.noResults')} />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[780px] text-sm">
+          <div className="w-full max-w-full overflow-x-auto">
+            <table className="w-full text-xs sm:text-sm">
               <thead className="border-b border-line text-xs text-mute">
                 <tr>
-                  <th className="px-3 py-2 text-start font-medium">{t('mkt.pair')}</th>
-                  <th className="px-3 py-2 text-end font-medium">{t('mkt.last')}</th>
-                  <th className="px-3 py-2 text-end font-medium">{t('mkt.change')}</th>
-                  <th className="px-3 py-2 text-end font-medium">{t('liveMkt.bid')}</th>
-                  <th className="px-3 py-2 text-end font-medium">{t('liveMkt.ask')}</th>
-                  <th className="px-3 py-2 text-end font-medium">{t('liveMkt.spread')}</th>
-                  <th className="px-3 py-2 text-end font-medium">{t('mkt.volume')}</th>
-                  <th className="px-3 py-2 text-end font-medium">{t('liveMkt.actions')}</th>
+                  <th className="px-2 py-2 text-start font-medium sm:px-3">{t('mkt.pair')}</th>
+                  <th className="px-2 py-2 text-end font-medium sm:px-3">{t('mkt.last')}</th>
+                  <th className="px-2 py-2 text-end font-medium sm:px-3">{t('mkt.change')}</th>
+                  <th className="hidden px-3 py-2 text-end font-medium md:table-cell">{t('liveMkt.bid')}</th>
+                  <th className="hidden px-3 py-2 text-end font-medium md:table-cell">{t('liveMkt.ask')}</th>
+                  <th className="hidden px-3 py-2 text-end font-medium lg:table-cell">{t('liveMkt.spread')}</th>
+                  <th className="hidden px-3 py-2 text-end font-medium sm:table-cell">{t('mkt.volume')}</th>
+                  <th className="px-2 py-2 text-end font-medium sm:px-3">{t('liveMkt.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line/60">
@@ -74,23 +74,23 @@ export function LiveMarketPage() {
                   const spreadPct = r.ask > 0 && r.bid > 0 ? ((r.ask - r.bid) / r.ask) * 100 : 0;
                   return (
                     <tr key={r.symbol} className="hover:bg-surface/60">
-                      <td className="num px-3 py-2 font-semibold">{r.symbol}</td>
-                      <td className="num px-3 py-2 text-end">{fmtPrice(r.last)}</td>
-                      <td className={`num px-3 py-2 text-end font-medium ${r.change24h >= 0 ? 'text-bull' : 'text-bear'}`}>
+                      <td className="num whitespace-nowrap px-2 py-2 font-semibold sm:px-3">{r.symbol}</td>
+                      <td className="num whitespace-nowrap px-2 py-2 text-end sm:px-3">{fmtPrice(r.last)}</td>
+                      <td className={`num whitespace-nowrap px-2 py-2 text-end font-medium sm:px-3 ${r.change24h >= 0 ? 'text-bull' : 'text-bear'}`}>
                         {fmtPct(r.change24h)}
                       </td>
-                      <td className="num px-3 py-2 text-end text-bull">{fmtPrice(r.bid)}</td>
-                      <td className="num px-3 py-2 text-end text-bear">{fmtPrice(r.ask)}</td>
-                      <td className="num px-3 py-2 text-end text-mute">{spreadPct.toFixed(3)}%</td>
-                      <td className="num px-3 py-2 text-end">{fmtCompact(r.volume24h)}</td>
-                      <td className="px-3 py-2 text-end">
+                      <td className="num hidden whitespace-nowrap px-3 py-2 text-end text-bull md:table-cell">{fmtPrice(r.bid)}</td>
+                      <td className="num hidden whitespace-nowrap px-3 py-2 text-end text-bear md:table-cell">{fmtPrice(r.ask)}</td>
+                      <td className="num hidden whitespace-nowrap px-3 py-2 text-end text-mute lg:table-cell">{spreadPct.toFixed(3)}%</td>
+                      <td className="num hidden whitespace-nowrap px-3 py-2 text-end sm:table-cell">{fmtCompact(r.volume24h)}</td>
+                      <td className="px-2 py-2 text-end sm:px-3">
                         <button
                           type="button"
                           onClick={() => navigate(`/terminal?symbol=${encodeURIComponent(r.symbol)}`)}
-                          className="inline-flex min-h-[32px] items-center gap-1 rounded border border-line bg-surface px-2.5 text-xs hover:border-cyan hover:text-cyan"
+                          className="inline-flex min-h-[32px] items-center gap-1 rounded border border-line bg-surface px-2 text-xs hover:border-cyan hover:text-cyan sm:px-2.5"
                         >
                           <CandlestickChart className="h-3.5 w-3.5" aria-hidden="true" />
-                          {t('mkt.openChart')}
+                          <span className="hidden sm:inline">{t('mkt.openChart')}</span>
                         </button>
                       </td>
                     </tr>

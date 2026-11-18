@@ -14,17 +14,17 @@ from app.core.config import PROJECT_ROOT
 updates_router = APIRouter(prefix="/api/v1/system/updates")
 
 _DEFAULT_MANIFEST: dict[str, Any] = {
-    "version": "1.0.0",
-    "release_tag": "v1.0.0",
+    "version": "1.1.0",
+    "release_tag": "v1.1.0",
     "repo": "aliazizdbab/apex-ai-trading-lab",
     "channel": "stable",
-    "published_at": "2026-11-18T22:50:00Z",
-    "notes": "APEX AI Trading Lab v1.0.0",
+    "published_at": "2026-11-19T00:05:00Z",
+    "notes": "APEX AI Trading Lab v1.1.0",
     "platforms": {
-        "web": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.0.0/apex-web-v1.0.0.zip",
-        "windows": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.0.0/apex-windows-v1.0.0.zip",
-        "macos": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.0.0/apex-macos-v1.0.0.tar.gz",
-        "android": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.0.0/apex-android-v1.0.0.apk",
+        "web": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.1.0/apex-web-v1.1.0.zip",
+        "windows": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.1.0/apex-windows-v1.1.0.zip",
+        "macos": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.1.0/apex-macos-v1.1.0.tar.gz",
+        "android": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.1.0/apex-android-v1.1.0.apk",
     },
 }
 
