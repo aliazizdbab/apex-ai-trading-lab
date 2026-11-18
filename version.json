@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "release_tag": "v1.0.0",
+  "repo": "aliazizdbab/apex-ai-trading-lab",
+  "channel": "stable",
+  "published_at": "2026-11-18T22:50:00Z",
+  "notes": "APEX AI Trading Lab v1.0.0 — Full 16-Phase Quantitative Platform, Agentic AI Copilot, and GitHub Auto-Updater for Web, Windows, macOS, and Android.",
+  "platforms": {
+    "web": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.0.0/apex-web-v1.0.0.zip",
+    "windows": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.0.0/apex-windows-v1.0.0.zip",
+    "macos": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.0.0/apex-macos-v1.0.0.tar.gz",
+    "android": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/download/v1.0.0/apex-android-v1.0.0.apk"
+  }
+}

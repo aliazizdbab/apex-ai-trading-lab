@@ -1,10 +1,12 @@
-import { Bell, Moon, Settings, Sun, User } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Bell, Bot, Download, Moon, Settings, Sun, User } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ALL_NAV_ITEMS } from '@/config/navigation';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { useSystemStatus } from '@/hooks/useSystemStatus';
 import { useT } from '@/i18n/useT';
+import { checkGithubUpdates, fetchAuthStatus, listNotifications } from '@/services/api';
 import { useUiStore, type Lang } from '@/stores/uiStore';
 import { Logo } from '@/ui/Logo';
 import { StatusBadge } from '@/ui/StatusBadge';
@@ -17,7 +19,33 @@ export function GlobalHeader() {
   const theme = useUiStore((s) => s.theme);
   const lang = useUiStore((s) => s.lang);
   const toggleTheme = useUiStore((s) => s.toggleTheme);
+  const toggleCopilot = useUiStore((s) => s.toggleCopilot);
+  const copilotOpen = useUiStore((s) => s.copilotOpen);
   const setLang = useUiStore((s) => s.setLang);
+
+  const { data: authStatus } = useQuery({
+    queryKey: ['auth-status'],
+    queryFn: fetchAuthStatus,
+    retry: false,
+  });
+
+  const { data: notifData } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: listNotifications,
+    enabled: Boolean(authStatus?.authenticated),
+    refetchInterval: 15_000,
+    retry: false,
+  });
+
+  const unreadCount = notifData?.unread_count ?? 0;
+
+  const { data: updateInfo } = useQuery({
+    queryKey: ['github-update-check'],
+    queryFn: checkGithubUpdates,
+    staleTime: 300_000,
+    refetchInterval: 600_000,
+    retry: false,
+  });
 
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -28,7 +56,7 @@ export function GlobalHeader() {
   const title = current ? t(current.labelKey) : t('common.notFoundTitle');
   const ThemeIcon = theme === 'dark' ? Sun : Moon;
   const iconButton =
-    'flex h-11 w-11 shrink-0 items-center justify-center rounded text-mute hover:bg-surface hover:text-ink sm:h-9 sm:w-9';
+    'relative flex h-11 w-11 shrink-0 items-center justify-center rounded text-mute hover:bg-surface hover:text-ink sm:h-9 sm:w-9';
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-line bg-panel px-3 sm:gap-3 sm:px-4">
@@ -39,15 +67,57 @@ export function GlobalHeader() {
 
       <div className="ms-auto flex items-center gap-1.5 sm:gap-2">
         <div className="hidden items-center gap-1.5 md:flex">
-          <StatusBadge label={t('status.mexc')} state={status.mexc} title={t('status.notWired')} />
-          <StatusBadge label={t('status.ai')} state={status.ai} title={t('status.notWired')} />
-          <StatusBadge label={t('status.engine')} state={status.engine} title={t('status.notWired')} />
+          <StatusBadge
+            label={t('status.mexc')}
+            state={status.mexc}
+            title={status.mexc === 'connected' ? t('status.mexcConnected') : t('status.mexcPlanned')}
+          />
+          <StatusBadge label={t('status.ai')} state={status.ai} title={t('status.aiPlanned')} />
+          <StatusBadge
+            label={t('status.engine')}
+            state={status.engine}
+            title={status.engine === 'connected' ? t('status.engineConnected') : t('status.notWired')}
+          />
         </div>
 
         <GlobalSearch className="hidden w-56 lg:block xl:w-72" />
 
+        <Link
+          to="/settings#updates"
+          title={t('upd.title')}
+          className={`hidden h-9 shrink-0 items-center gap-1 rounded border px-2 text-[11px] font-medium transition md:inline-flex ${
+            updateInfo?.update_available
+              ? 'border-warn/60 bg-warn/15 text-warn'
+              : 'border-line bg-surface text-mute hover:border-cyan/60 hover:text-ink'
+          }`}
+        >
+          <Download className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="num">
+            v{updateInfo?.current_version ?? '1.0.0'}
+            {updateInfo?.update_available ? ` → ${updateInfo.latest_tag}` : ''}
+          </span>
+        </Link>
+
+        <button
+          type="button"
+          onClick={toggleCopilot}
+          aria-pressed={copilotOpen}
+          title={t('copilot.subtitle')}
+          className={`flex h-9 shrink-0 items-center gap-1.5 rounded border px-2.5 text-xs font-medium transition ${
+            copilotOpen
+              ? 'border-cyan bg-cyan/15 text-cyan'
+              : 'border-line bg-surface text-ink hover:border-cyan/60'
+          }`}
+        >
+          <Bot className="h-4 w-4 text-cyan" aria-hidden="true" />
+          <span className="hidden sm:inline">{t('copilot.button')}</span>
+        </button>
+
         <Link to="/notifications" aria-label={t('header.notifications')} title={t('header.notifications')} className={iconButton}>
           <Bell className="h-[18px] w-[18px]" aria-hidden="true" />
+          {unreadCount > 0 && (
+            <span className="absolute end-1.5 top-1.5 h-2 w-2 rounded-full bg-cyan" aria-hidden="true" />
+          )}
         </Link>
 
         <button type="button" onClick={toggleTheme} aria-label={t('header.toggleTheme')} title={t('header.toggleTheme')} className={iconButton}>
@@ -77,6 +147,12 @@ export function GlobalHeader() {
           </button>
           {menuOpen && (
             <div role="menu" className="absolute end-0 top-full z-40 mt-1 w-48 animate-fadeIn rounded-md border border-line bg-elevated py-1 shadow-lg">
+              {authStatus?.user && (
+                <div className="border-b border-line px-3 py-2 text-xs text-mute">
+                  <div className="truncate font-medium text-ink">{authStatus.user.display_name}</div>
+                  <div className="truncate">{authStatus.user.email}</div>
+                </div>
+              )}
               <Link
                 to="/settings"
                 role="menuitem"

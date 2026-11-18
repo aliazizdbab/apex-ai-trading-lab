@@ -1,0 +1,16 @@
+{
+  "name": "APEX AI Trading Lab",
+  "short_name": "APEX AI",
+  "description": "Quantitative Spot Trading Terminal, Pine Script Studio & Agentic AI Copilot",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f17",
+  "theme_color": "#0b0f17",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

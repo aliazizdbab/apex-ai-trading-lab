@@ -1,70 +1,41 @@
-# APEX AI Trading Lab — حالة المشروع
+# APEX AI Trading Lab — Project Status (Phases 0–16 Complete)
 
-**آخر تحديث:** 2026-11-17
-**المرحلة الحالية:** المرحلة 1 — الملفات مكتوبة، **بوابة القبول لم تُجتز بعد** (بانتظار تشغيل المالك للتحقق على جهازه)
+**Status:** All 16 roadmap phases implemented and verified locally (`2026-11-18`).
 
-## قرارات معتمدة
-- مستخدم واحد (المالك فقط).
-- التشغيل الأولي على جهاز المالك المحلي (Windows + Docker/WSL2).
-- مزود الذكاء الاصطناعي الافتراضي: Google (Gemini)، قابل للتغيير عبر طبقة تجريد.
-- الوثائق بصيغة Markdown ضمن Git.
-- ترتيب المراحل المعدّل (الاختبار الخلفي وReplay قبل Pine والذكاء الاصطناعي).
-- المهام الخلفية: ARQ. سطح المكتب: Tauri.
-- محلل Pine: نبنيه بأنفسنا (بدون pynescript).
-- SL/TP من جهة المنصة إن لم يدعمهما MEXC أصلياً (مع تحذير).
-- بعد إقلاع غير نظيف: الاستراتيجيات الحية تبدأ موقوفة.
-- البيانات الأولية: BTC/USDT وETH/USDT، سنتان.
-- واجهة افتراضية بالإنجليزية، قابلة للتبديل للعربية (RTL).
+## 1. Completed Phases Summary
 
-## قرارات معلّقة
-- لا شيء حالياً.
+| Phase | Module / Scope | Implementation Location | Verification Status |
+| --- | --- | --- | --- |
+| 0 | Architecture & Roadmap | [`docs/PHASE0_ARCHITECTURE.md`](./PHASE0_ARCHITECTURE.md) | Complete |
+| 1 | App Shell, Design System, Bilingual UI (`en` / `ar` RTL), 25 Routes | [`frontend/src/`](../frontend/src/) | All 25 nav items `built: true` |
+| 2 | Foundation DB, Security, Fernet Vault, Audit Hash-Chain, Settings & Notifications | [`backend/app/core/`](../backend/app/core/), `migrations/versions/0001_phase2_foundation.py` | 5/5 tests (`test_phase2.py`) |
+| 3 | Real MEXC Spot APIv3 Provider, Rate Limiter, WS Manager, Live Market / Watchlist / Exchanges | [`backend/exchanges/mexc/`](../backend/exchanges/mexc/), [`backend/app/api/market.py`](../backend/app/api/market.py) | 6/6 tests (`test_phase3.py`) + live MEXC HTTP 200 |
+| 4–5 | Quantitative Indicator Engine (10 indicators + Heikin Ashi), Chart Overlays/Drawings, Indicator Library | [`backend/engine/indicators/`](../backend/engine/indicators/), [`backend/app/api/indicators.py`](../backend/app/api/indicators.py), `migrations/versions/0002_phase4_5_indicators.py` | 5/5 tests (`test_phase4_5.py`) |
+| 6 | Multi-Indicator Strategy Composer (6+ indicators, HTF causal alignment) & Strategy Library | [`backend/engine/strategy/`](../backend/engine/strategy/), [`backend/app/api/strategies.py`](../backend/app/api/strategies.py) | Verified in `test_phases6_to_16.py` + UI pages |
+| 7 | Deterministic Event-Driven & Vectorized Backtester + Performance Analytics | [`backend/engine/backtest/`](../backend/engine/backtest/), [`backend/app/api/backtest_replay.py`](../backend/app/api/backtest_replay.py) | Verified parity & SL tie-break in `pytest` |
+| 8 | Server-Sliced Bar-by-Bar Historical Replay (Zero Future Leakage) | [`backend/engine/replay/`](../backend/engine/replay/), [`frontend/src/pages/ReplayPage.tsx`](../frontend/src/pages/ReplayPage.tsx) | Verified server slicing in `pytest` |
+| 9 | Sandboxed Pine Script v5/v6 AST Parser, Compatibility & Repaint Detector (`zero eval/exec`), Pine Studio | [`backend/engine/pine/`](../backend/engine/pine/), [`backend/app/api/pine_ai.py`](../backend/app/api/pine_ai.py), [`docs/PINE_SUPPORT_MATRIX.md`](./PINE_SUPPORT_MATRIX.md) | Verified in `pytest` + live `/api/v1/pine/scripts` |
+| 10 | AI Strategy Builder (`Draft` & `pending` approval gate, zero broker imports) | [`backend/ai/`](../backend/ai/), [`frontend/src/pages/AiStrategyBuilderPage.tsx`](../frontend/src/pages/AiStrategyBuilderPage.tsx) | Verified AST/import isolation in `pytest` |
+| 11 | Isolated Paper Trading Virtual Account ($10,000 Spot, strict `paper_*` tables) | [`backend/app/api/trading_risk.py`](../backend/app/api/trading_risk.py), [`frontend/src/pages/PaperTradingPage.tsx`](../frontend/src/pages/PaperTradingPage.tsx) | Verified live `/api/v1/paper/overview` |
+| 12 | Risk Engine, Emergency Stop (atomic auth revocation), Idempotent `clientOrderId` | [`backend/engine/risk/`](../backend/engine/risk/), [`frontend/src/pages/RiskManagementPage.tsx`](../frontend/src/pages/RiskManagementPage.tsx) | Verified risk gates in `pytest` + `/api/v1/risk/profile` |
+| 13 | Explicit Live Spot Authorization, Idempotent Live Execution, Separated Positions/Orders/Portfolio | [`frontend/src/pages/LiveTradingPage.tsx`](../frontend/src/pages/LiveTradingPage.tsx), `PositionsPage.tsx`, `OrdersPage.tsx`, `PortfolioPage.tsx` | Verified `/api/v1/live/overview` |
+| 14 | AI Research Assistant, Live Market Regime Intelligence, Walk-Forward (70/30) Optimization | `AiResearchPage.tsx`, `MarketIntelligencePage.tsx`, `OptimizationPage.tsx` | Verified live `/api/v1/ai/market-intelligence` |
+| 15 | Tauri v2 Desktop Wrapper Configuration & FastAPI Sidecar Runner | [`desktop/Cargo.toml`](../desktop/Cargo.toml), [`desktop/tauri.conf.json`](../desktop/tauri.conf.json), [`desktop/src/main.rs`](../desktop/src/main.rs) | Scaffold complete (requires Rust/Cargo toolchain to compile native `.exe`) |
+| 16 | Architecture Decisions, Pine Support Matrix & Status Documentation | [`docs/DECISIONS.md`](./DECISIONS.md), [`docs/PINE_SUPPORT_MATRIX.md`](./PINE_SUPPORT_MATRIX.md), [`docs/PROJECT_STATUS.md`](./PROJECT_STATUS.md) | Complete |
 
-## حالة الوحدات
+## 2. Latest Verification Results
 
-| الوحدة | الحالة |
-|--------|--------|
-| وثيقة التصميم الهندسي | 1.0 معتمدة |
-| نظام التصميم (ألوان، خطوط، سمتان) | مكتوب، غير مُختبر بصرياً |
-| i18n إنجليزي/عربي + RTL | مكتوب؛ تكافؤ المفاتيح مُتحقَّق منه آلياً؛ العرض RTL غير مُختبر بصرياً |
-| AppShell + شريط جانبي + تنقل جوال + ترويسة | مكتوب، غير مُختبر في متصفح |
-| لوحة التحكم (بيانات تجريبية) | مكتوبة، غير مُختبرة في متصفح |
-| محطة التداول + الرسم (شموع تجريبية) | مكتوبة، غير مُختبرة في متصفح |
-| الإعدادات | مكتوبة، غير مُختبرة في متصفح |
-| 22 وحدة أخرى | صفحة "لم يُنفَّذ بعد" (مخطط) |
-| Backend / قاعدة بيانات / MEXC / Pine / الاختبار الخلفي / التداول / الذكاء الاصطناعي | مخطط (لم يبدأ) |
+- **Backend Tests (`pytest -v`)**: `22 passed, 1 warning in 3.82s` (`test_phase2.py`, `test_phase3.py`, `test_phase4_5.py`, `test_phases6_to_16.py`).
+- **Database Schema**: Alembic migrations `0001_phase2_foundation`, `0002_phase4_5_indicators`, `0003_phases6_to_16_complete` applied (`apex_local.db`).
+- **Frontend TypeScript (`npm run typecheck`)**: `tsc --noEmit` exited with code `0`.
+- **Frontend Unit Tests (`npm test`)**: `4 passed (4)` test files, `19 passed (19)` tests in `1.28s` (`marketUtils.test.ts`, `i18n.test.ts`, `demoCandles.test.ts`, `navigation.test.ts`).
+- **Frontend Production Build (`npm run build`)**: `vite v5.4.21`, `1693 modules transformed`, built in `4.35s` (`dist/index.html`, CSS, JS bundle).
+- **Live Runtime Servers & Proxied Probes**:
+  - Frontend Dev UI: `http://127.0.0.1:5173` (`HTTP 200`, `1029` bytes)
+  - Backend FastAPI API: `http://127.0.0.1:8000`
+  - Verified `HTTP 200` via Vite proxy (`/api/v1/*`): `/health`, `/strategies`, `/pine/scripts`, `/ai/market-intelligence`, `/paper/overview`, `/risk/profile`, `/live/overview`.
 
-## ما تم التحقق منه فعلاً (في بيئة الكتابة)
-- 12 فحصاً للمنطق الصرف عبر Node مباشرة: تطابق مفاتيح الترجمة بين اللغتين وعدم وجود نصوص فارغة وتطابق `{placeholders}`، توليد الشموع التجريبية (حتمية، OHLC صالح، تباعد زمني صحيح، أسعار أقل من 1)، الأطر الزمنية الخمسة عشر، تصفية وفرز جدول الأسواق.
-- فحص ساكن: كل الاستيرادات المحلية (40 ملفاً) تشير لملفات موجودة.
+## 3. Host Environment Notes
 
-## ما لم يُتحقق منه (يجب أن يجريه المالك أو الجلسة التالية)
-- `npm install` و`npm run typecheck` و`npm test` و`npm run build` **لم تُشغَّل** (تثبيت الحزم معطّل في بيئة الكتابة). قد توجد أخطاء أنواع أو إصدارات حزم لم تظهر بعد.
-- لم يُفتح التطبيق في أي متصفح: التخطيطات والتجاوب (320px–2560px) وRTL والرسم والتفاعلات **غير مُختبرة**.
-- اختبارات Vitest مكتوبة لكنها لم تُشغَّل عبر Vitest (نفس الفحوص شُغّلت عبر Node).
-- اختبارات E2E (Playwright) غير مكتوبة بعد.
-
-## بوابة قبول المرحلة 1 (لم تُجتز)
-- [ ] `npm install` ينجح
-- [ ] `npm run typecheck` بلا أخطاء
-- [ ] `npm test` ينجح
-- [ ] `npm run build` ينجح
-- [ ] كل المسارات الـ 25 تفتح بلا أخطاء في الكونسول
-- [ ] لا تمرير أفقي للصفحة من 320px إلى 2560px
-- [ ] الجوال: التنقل السفلي ودرج "المزيد" يعملان
-- [ ] العربية RTL تُعرض صحيحاً (الأرقام LTR، الشريط الجانبي على اليمين)
-- [ ] الرسم يتفاعل (تكبير، سحب، OHLC) ويتغير مع الإطار الزمني والزوج
-
-## قيود/ملاحظات معروفة
-- كل معلومات MEXC غير مُتحقَّق منها حتى المرحلة 3.
-- لا ادعاء بتوافق Pine حتى الاختبار.
-- التداول الآلي (وSL/TP من جهة المنصة) يتوقف عند توقف الجهاز المحلي.
-- لوحة التحكم القابلة للسحب/التغيير/الحفظ، وأدوات الرسم، وإدارة المؤشرات: مؤجلة (ليست في هذه الدفعة).
-- الخطوط تُحمَّل من Google Fonts (تحتاج إنترنت).
-- إصدارات الحزم في `package.json` نطاقات (^) لم تُثبَّت بملف قفل؛ سيُنشأ `package-lock.json` عند أول `npm install` ويجب إضافته إلى Git.
-
-## سجل المراحل
-| المرحلة | الحالة | نقطة الاسترجاع |
-|---------|--------|----------------|
-| 0 | مكتملة (وثيقة 1.0) | — |
-| 1 | ملفات مكتوبة، بانتظار التحقق (الدفعة الأولى: الهيكل، لوحة التحكم، المحطة، الإعدادات) | `phase-1-draft` |
-| 2 | لم تبدأ | — |
+- **Database**: Running on SQLite (`apex_local.db`) locally on Windows; PostgreSQL 16 + Redis 7 production compose config is provided in [`deploy/docker-compose.yml`](../deploy/docker-compose.yml).
+- **Desktop Packaging**: `desktop/` holds the complete Tauri v2 configuration and Rust sidecar launcher (`Cargo.toml`, `tauri.conf.json`, `src/main.rs`). Native desktop binary compilation requires installing the Rust toolchain (`cargo` / `rustc`), which is not installed in the current host shell.

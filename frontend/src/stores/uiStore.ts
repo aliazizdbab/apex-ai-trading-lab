@@ -8,12 +8,15 @@ interface UiState {
   theme: Theme;
   lang: Lang;
   sidebarCollapsed: boolean;
+  copilotOpen: boolean;
   favorites: string[];
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   setLang: (lang: Lang) => void;
   toggleSidebar: () => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
+  toggleCopilot: () => void;
+  setCopilotOpen: (open: boolean) => void;
   toggleFavorite: (symbol: string) => void;
 }
 
@@ -27,12 +30,15 @@ export const useUiStore = create<UiState>()(
       theme: 'dark',
       lang: 'en',
       sidebarCollapsed: false,
+      copilotOpen: false,
       favorites: ['BTC/USDT', 'ETH/USDT'],
       setTheme: (theme) => set({ theme }),
       toggleTheme: () => set((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
       setLang: (lang) => set({ lang }),
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
       setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
+      toggleCopilot: () => set((s) => ({ copilotOpen: !s.copilotOpen })),
+      setCopilotOpen: (copilotOpen) => set({ copilotOpen }),
       toggleFavorite: (symbol) =>
         set((s) => ({
           favorites: s.favorites.includes(symbol)

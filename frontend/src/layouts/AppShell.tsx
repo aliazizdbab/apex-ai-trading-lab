@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { AiCopilotDrawer } from '@/features/copilot/AiCopilotDrawer';
 import { AppSidebar } from './AppSidebar';
 import { GlobalHeader } from './GlobalHeader';
 import { MobileNavigation } from './MobileNavigation';
@@ -14,6 +15,7 @@ export function AppShell() {
         </main>
         <MobileNavigation />
       </div>
+      <AiCopilotDrawer />
     </div>
   );
 }

@@ -1,0 +1,124 @@
+name: Multi-Platform Build & GitHub Release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Backend Pytest
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pytest -v
+      - name: Frontend Typecheck, Tests & Build
+        run: |
+          cd frontend
+          npm ci
+          npm run typecheck
+          npm test
+          npm run build
+      - name: Package Web Release
+        run: |
+          mkdir -p artifacts
+          cp version.json frontend/dist/version.json
+          (cd frontend/dist && zip -r ../../artifacts/apex-web-latest.zip .)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: artifacts/apex-web-latest.zip
+
+  desktop-windows:
+    needs: test-and-web
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+      - name: Package Windows Release Bundle
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          Compress-Archive -Path frontend/dist,backend,desktop,scripts,version.json -DestinationPath artifacts/apex-windows-latest.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: artifacts/apex-windows-latest.zip
+
+  desktop-macos:
+    needs: test-and-web
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+      - name: Package macOS Release Bundle
+        run: |
+          mkdir -p artifacts
+          chmod +x scripts/start-macos.command
+          tar -czf artifacts/apex-macos-latest.tar.gz frontend/dist backend desktop scripts version.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: artifacts/apex-macos-latest.tar.gz
+
+  mobile-android:
+    needs: test-and-web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Build Web Assets & Signed Android APK
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+          cd ..
+          mkdir -p artifacts android/assets/www android/build/classes
+          cp -r frontend/dist/* android/assets/www/
+          cp version.json android/assets/www/version.json
+          ANDROID_JAR=$(ls $ANDROID_HOME/platforms/android-*/android.jar | tail -n 1)
+          BT_DIR=$(ls -d $ANDROID_HOME/build-tools/* | tail -n 1)
+          "$BT_DIR/aapt" package -f -M android/AndroidManifest.xml -I "$ANDROID_JAR" -A android/assets -F artifacts/apex-unaligned.apk
+          javac --release 11 -cp "$ANDROID_JAR" -d android/build/classes android/src/local/apex/tradinglab/MainActivity.java
+          "$BT_DIR/d8" --lib "$ANDROID_JAR" --output artifacts $(find android/build/classes -name '*.class')
+          zip -j artifacts/apex-unaligned.apk artifacts/classes.dex
+          "$BT_DIR/zipalign" -f 4 artifacts/apex-unaligned.apk artifacts/apex-aligned.apk
+          keytool -genkeypair -v -keystore artifacts/debug.keystore -storepass android -alias apexdebug -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=APEX,O=APEX,C=US"
+          "$BT_DIR/apksigner" sign --ks artifacts/debug.keystore --ks-pass pass:android --out artifacts/apex-android-latest.apk artifacts/apex-aligned.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-build
+          path: artifacts/apex-android-latest.apk

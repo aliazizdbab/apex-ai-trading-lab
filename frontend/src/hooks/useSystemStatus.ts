@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+import { fetchHealth } from '@/services/api';
 import type { ConnectionState } from '@/types';
 
 export interface SystemStatus {
@@ -6,10 +8,28 @@ export interface SystemStatus {
   engine: ConnectionState;
 }
 
+const DISCONNECTED: SystemStatus = {
+  mexc: 'disconnected',
+  ai: 'disconnected',
+  engine: 'disconnected',
+};
+
 /**
- * Phase 1: no backend exists, so every service is honestly reported as disconnected.
- * Phase 2/3 replace this with real health data from the API. Never fake a connected state.
+ * Polls `/api/v1/health` so Engine reflects actual backend reachability
+ * while MEXC and AI remain honestly disconnected until Phases 3 and 10/14.
  */
 export function useSystemStatus(): SystemStatus {
-  return { mexc: 'disconnected', ai: 'disconnected', engine: 'disconnected' };
+  const { data } = useQuery({
+    queryKey: ['system-health'],
+    queryFn: fetchHealth,
+    refetchInterval: 10_000,
+    retry: false,
+  });
+
+  if (!data) return DISCONNECTED;
+  return {
+    engine: data.engine,
+    mexc: data.mexc,
+    ai: data.ai,
+  };
 }

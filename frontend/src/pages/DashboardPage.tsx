@@ -1,10 +1,12 @@
 import { Activity, Layers, Plug } from 'lucide-react';
 import { useState } from 'react';
-import { DEMO_MARKETS, DEMO_METRICS } from '@/features/market/demoData';
+import { DEMO_METRICS } from '@/features/market/demoData';
 import { MarketTable } from '@/features/market/MarketTable';
+import { useLiveMarkets } from '@/features/market/useLiveMarkets';
 import { useT } from '@/i18n/useT';
 import { DemoBadge, DemoBanner } from '@/ui/DemoBadge';
 import { EmptyState } from '@/ui/EmptyState';
+import { LiveBadge } from '@/ui/LiveBadge';
 import { MetricCard } from '@/ui/MetricCard';
 import { Panel } from '@/ui/Panel';
 import { Segmented } from '@/ui/Segmented';
@@ -15,6 +17,7 @@ type Account = 'real' | 'paper';
 export function DashboardPage() {
   const t = useT();
   const [account, setAccount] = useState<Account>('paper');
+  const { rows, isLive } = useLiveMarkets();
   const m = DEMO_METRICS;
   const period = t('dash.vs24h');
 
@@ -55,8 +58,8 @@ export function DashboardPage() {
         </Panel>
       )}
 
-      <Panel title={t('dash.markets')} actions={<DemoBadge />}>
-        <MarketTable rows={DEMO_MARKETS} />
+      <Panel title={t('dash.markets')} actions={isLive ? <LiveBadge /> : <DemoBadge />}>
+        <MarketTable rows={rows} />
       </Panel>
 
       <div className="grid gap-4 lg:grid-cols-2">

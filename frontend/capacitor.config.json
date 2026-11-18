@@ -1,0 +1,21 @@
+{
+  "appId": "local.apex.tradinglab",
+  "appName": "APEX AI Trading Lab",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": [
+      "api.github.com",
+      "github.com",
+      "api.mexc.com",
+      "127.0.0.1",
+      "localhost"
+    ]
+  },
+  "plugins": {
+    "LiveUpdates": {
+      "manifestUrl": "https://github.com/aliazizdbab/apex-ai-trading-lab/releases/latest/download/version.json"
+    }
+  }
+}
